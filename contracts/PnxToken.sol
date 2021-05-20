@@ -13,7 +13,7 @@ contract PnxToken is ERC20{
     address private _operator;
 
     /// FinNexus total tokens supply
-    uint public MAX_TOTAL_TOKEN_AMOUNT = 500000000 ether;
+    uint public MAX_TOTAL_TOKEN_AMOUNT = 176495407 ether;
 
     modifier maxWanTokenAmountNotReached (uint amount){
     	  assert(totalSupply().add(amount) <= MAX_TOTAL_TOKEN_AMOUNT);
