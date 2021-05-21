@@ -46,7 +46,7 @@ contract PnxToken is ERC20{
         return _decimals;
     }
 
-    function getInitiator() public view returns (address,address) {
+    function getInitiators() public view returns (address,address) {
         return (_initiator, _operator);
     }
 
