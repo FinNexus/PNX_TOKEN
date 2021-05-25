@@ -4,7 +4,7 @@ import './ERC20.sol';
 contract PnxToken is ERC20{
     using SafeMath for uint;
 
-    string private _name = "Phenix";
+    string private _name = "Phoenix";
     string private _symbol = "PNX";
 
     uint8 private _decimals = 18;

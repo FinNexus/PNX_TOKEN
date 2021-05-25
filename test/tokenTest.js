@@ -16,76 +16,65 @@ require('truffle-test-utils').init()
 let FnxTokenInstance,
     FnxTokenInstanceAddress
 
-let mintTokenAmount = 100;
-
+const MAX_FNX = 176495407;
 ////////////////////////////////////////////////////////////////////////////////////////
-contract('FnxToken', async ([owner]) => {
+
+contract('PnxToken', async (accounts) => {
 
     it('[90000000] Deploy contracts', async () => {
-
-        owner = OWNER_ADDRESS;
         // unlock accounts
-
-        console.log(owner);
-
-
-        FnxTokenInstance = await FnxTokenSol.new({from:owner});
+        FnxTokenInstance = await FnxTokenSol.new(accounts[1],accounts[2],{from:accounts[0]});
         FnxTokenInstanceAddress = FnxTokenInstance.address
-        console.log('[INFO] FnxTokenInstance address:', FnxTokenInstanceAddress);
+        console.log('[INFO] PnxTokenInstance address:', FnxTokenInstanceAddress);
+    })
+
+
+    it('[90000100] check Pnx ,should success ', async () => {
+        let user1Bal = await FnxTokenInstance.balanceOf(accounts[1]);
+        user1Bal = web3.utils.fromWei(user1Bal);
+        assert.equal(user1Bal,MAX_FNX,"max fnx not equal balance of user1")
+    })
+
+    it('[90000200] transfer Pnx ,should success ', async () => {
+        var preTokens = await FnxTokenInstance.balanceOf(accounts[1]);
+
+        let ret = await FnxTokenInstance.transfer(accounts[2],web3.utils.toWei(""+MAX_FNX) ,{from:accounts[1]});
+        assert.equal(ret.receipt.status,true);
+
+        var gotTokens = await FnxTokenInstance.balanceOf(accounts[2]);
+        gotTokens = web3.utils.fromWei(gotTokens);
+        assert.equal(gotTokens,MAX_FNX,"max fnx not equal balance of user1")
+
+        let user1Bal = await FnxTokenInstance.balanceOf(accounts[1]);
+        user1Bal = web3.utils.fromWei(user1Bal);
+        assert.equal(user1Bal,0,"balance of user1 is not 0")
 
     })
 
 
-    it('[90000100] mint Fnx ,should success ', async () => {
+    it('[90000300] approve Pnx ,should success ', async () => {
 
-        var preTokens = await FnxTokenInstance.balanceOf(USER1_ADDRESS);
+        var preTokens = await FnxTokenInstance.balanceOf(accounts[2]);
 
-        let ret = await FnxTokenInstance.mint(USER1_ADDRESS,web3.utils.toHex(mintTokenAmount*10**18) ,{from:owner});
-       // console.log(ret)
-
-       var gotTokens = await FnxTokenInstance.balanceOf(USER1_ADDRESS);
-
-        console.log("function got tokens=",gotTokens);
-
-        assert.equal(web3.utils.toHex(gotTokens - preTokens),web3.utils.toHex(mintTokenAmount*10**18));
-
-        ret = await FnxTokenInstance.mint(owner,web3.utils.toWei((mintTokenAmount*1000).toString(),"ether") ,{from:owner});
-
-    })
-
-
-    it('[90000200] transfer Fnx ,should success ', async () => {
-
-        var preTokens = await FnxTokenInstance.balanceOf(USER2_ADDRESS);
-
-        let ret = await FnxTokenInstance.transfer(USER2_ADDRESS,web3.utils.toHex(mintTokenAmount*10**18) ,{from:owner});
-        //console.log(ret)
-
-        var gotTokens = await FnxTokenInstance.balanceOf(USER2_ADDRESS);
-
-        console.log("function got tokens=",gotTokens);
-
-        assert.equal(web3.utils.toHex(gotTokens - preTokens),web3.utils.toHex(mintTokenAmount*10**18));
-    })
-
-
-    it('[90000300] approve Fnx ,should success ', async () => {
-
-        var preTokens = await FnxTokenInstance.balanceOf(USER1_ADDRESS);
-
-        let ret = await FnxTokenInstance.approve(USER2_ADDRESS,web3.utils.toHex(mintTokenAmount*10**18) ,{from:owner});
-       // console.log(ret)
-        ret = await FnxTokenInstance.transferFrom(owner,USER1_ADDRESS,web3.utils.toHex(mintTokenAmount*10**18),{from:USER2_ADDRESS});
-        //console.log(ret)
+        let ret = await FnxTokenInstance.approve(accounts[3], web3.utils.toWei(""+MAX_FNX),{from:accounts[2]});
+        assert.equal(ret.receipt.status,true);
+        ret = await FnxTokenInstance.transferFrom(accounts[2],accounts[1],web3.utils.toWei(""+MAX_FNX),{from:accounts[3]});
+        assert.equal(ret.receipt.status,true);
 
         sleep(200)
-        var gotTokens = await FnxTokenInstance.balanceOf(USER1_ADDRESS);
+        var gotTokens = await FnxTokenInstance.balanceOf(accounts[2]);
+        gotTokens = web3.utils.fromWei(gotTokens);
+        assert.equal(gotTokens,0,"balance of user1 is not 0")
 
-        console.log("function got tokens=",gotTokens);
-
-        assert.equal(web3.utils.toHex(gotTokens - preTokens),web3.utils.toHex(mintTokenAmount*10**18));
     })
 
-
+    it('[90000300] change name ,should success ', async () => {
+        let ret = await FnxTokenInstance.changeTokenName("cPhoenix","cPhx",{from:accounts[2]});
+        assert.equal(ret.receipt.status,true);
+        let name = await FnxTokenInstance.name();
+        assert.equal(name,"cPhoenix","name is not match")
+        let symbol = await FnxTokenInstance.symbol();
+        assert.equal(symbol,"cPhx","fymbole is not match")
+    })
 
 })
