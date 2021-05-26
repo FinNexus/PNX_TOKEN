@@ -4,8 +4,8 @@ import './ERC20.sol';
 contract PnxToken is ERC20{
     using SafeMath for uint;
 
-    string private _name = "Phoenix";
-    string private _symbol = "PNX";
+    string private _name = "Phoenix Token";
+    string private _symbol = "PHX";
 
     uint8 private _decimals = 18;
 
@@ -45,20 +45,5 @@ contract PnxToken is ERC20{
         return (_initiator, _operator);
     }
 
-  /**
-     * EXTERNAL FUNCTION
-     *
-     * @dev change token name
-     * @param name token name
-     * @param symbol token symbol
-     *
-     */
-    function changeTokenName(string memory name, string memory symbol)
-        public
-    {
-        require(msg.sender==_operator,"sender is not operator");
-        _name = name;
-        _symbol = symbol;
-    }
 
 }
