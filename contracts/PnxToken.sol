@@ -8,13 +8,11 @@ contract PnxToken is ERC20{
     string private _symbol = "PHX";
 
     uint8 private _decimals = 18;
-    address private _initiator;
 
     /// FinNexus total tokens supply
     uint public MAX_TOTAL_TOKEN_AMOUNT = 176495407 ether;
 
-    constructor(address initiator,address operator)public{
-        _initiator = initiator;
+    constructor(address initiator)public{
         _init(initiator,MAX_TOTAL_TOKEN_AMOUNT);
     }
     /**
